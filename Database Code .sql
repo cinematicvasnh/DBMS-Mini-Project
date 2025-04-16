@@ -1,241 +1,267 @@
-create database HotelManagement;
-use HotelMangement;
+CREATE DATABASE mahindra_showroom;
+USE mahindra_showroom;
 
--- 1. hostel_user table  
-CREATE TABLE hostel_user ( 
-    user_id INT PRIMARY KEY, 
-    username VARCHAR(50), 
-    password VARCHAR(50), 
-    role VARCHAR(20) 
-); 
- -- 2. student table  
-CREATE TABLE student ( 
-    student_id INT PRIMARY KEY, 
-    name VARCHAR(100), 
-    gender VARCHAR(10), 
-    dob DATE, 
-    course VARCHAR(50), 
-    phone VARCHAR(15), 
-    email VARCHAR(100), 
-    address TEXT 
-); 
- -- 3. hostels table  
-CREATE TABLE hostels ( 
-    hostel_id INT PRIMARY KEY, 
-    name VARCHAR(50), 
-    location VARCHAR(100), 
-    total_rooms INT, 
-    type VARCHAR(20)  -- 'Boys', 'Girls', or 'Co-ed' 
-); 
- -- 4. rooms table  
-CREATE TABLE rooms ( 
-    room_id INT PRIMARY KEY, 
- 
+-- TABLES
 
- 
-    hostel_id INT, 
-    room_number VARCHAR(10), 
-    capacity INT, 
-    occupied INT, 
-    type VARCHAR(20),  -- 'AC', 'Non-AC', 'Single', 'Shared' 
-    FOREIGN KEY (hostel_id) REFERENCES hostels(hostel_id) 
-); 
- -- 5. warden table  
-CREATE TABLE warden ( 
-    warden_id INT PRIMARY KEY, 
-    name VARCHAR(50), 
-    phone VARCHAR(15), 
-    email VARCHAR(100), 
-    hostel_id INT, 
-    FOREIGN KEY (hostel_id) REFERENCES hostels(hostel_id) 
-); 
- -- 6. allotments table  
-CREATE TABLE allotments ( 
-    allotment_id INT PRIMARY KEY, 
-    student_id INT, 
-    room_id INT, 
-    allot_date DATE, 
-    leave_date DATE, 
-    FOREIGN KEY (student_id) REFERENCES student(student_id), 
-    FOREIGN KEY (room_id) REFERENCES rooms(room_id) 
-); 
- -- 7. payment table  
-CREATE TABLE payment ( 
-    payment_id INT PRIMARY KEY, 
-    student_id INT, 
-    amount DECIMAL(10, 2), 
-    date DATE, 
-    method VARCHAR(20),  -- 'UPI', 'Card', 'Cash', etc. 
-    status VARCHAR(20),  -- 'Paid', 'Pending' 
-    FOREIGN KEY (student_id) REFERENCES student(student_id) 
-); 
- 
-
- 
- -- 8. complaints table  
-CREATE TABLE complaints ( 
-    complaint_id INT PRIMARY KEY, 
-    student_id INT, 
-    room_id INT, 
-    issue TEXT, 
-    date_filed DATE, 
-    status VARCHAR(20),  -- 'Open', 'In Progress', 'Closed' 
-    FOREIGN KEY (student_id) REFERENCES student(student_id), 
-    FOREIGN KEY (room_id) REFERENCES rooms(room_id) 
-); 
- -- 9. visitors table  
-CREATE TABLE visitors ( 
-    visitor_id INT PRIMARY KEY, 
-    student_id INT, 
-    name VARCHAR(50), 
-    relation VARCHAR(50), 
-    visit_date DATE, 
-    in_time TIME, 
-    out_time TIME, 
-    FOREIGN KEY (student_id) REFERENCES student(student_id) 
-); 
- -- 10. inventory table  
-CREATE TABLE inventory ( 
-    item_id INT PRIMARY KEY, 
-    hostel_id INT, 
-    item_name VARCHAR(50), 
-    quantity INT, 
-    condition_ VARCHAR(20),  -- 'New', 'Good', 'Damaged' 
-    FOREIGN KEY (hostel_id) REFERENCES hostels(hostel_id) 
+-- 1. Showrooms Table
+CREATE TABLE Showrooms (
+    ShowroomID INT PRIMARY KEY,
+    Name VARCHAR(50) NOT NULL,
+    Location VARCHAR(100) NOT NULL,
+    ManagerName VARCHAR(50)
 );
 
+-- 2. Cars Table
+CREATE TABLE Cars (
+    CarID INT PRIMARY KEY,
+    Model VARCHAR(50) NOT NULL,
+    Type VARCHAR(30) NOT NULL,
+    Engine VARCHAR(30) NOT NULL,
+    Price DECIMAL(10,2) NOT NULL
+);
 
--- Entries
--- Sample data for student  
-INSERT INTO student VALUES   
-(1, 'Aditi Rana', 'Female', '1998-05-12', 'BCA', '9876543210', '23bca10808@cuchd.in', 
-'1234, Main Street, Chandigarh'),  
-(2, 'Ravi Kumar', 'Male', '1999-08-22', 'BBA', '9876501234', '23bca10809@cuchd.in', 
-'4567, Sector 12, Mohali'),  
-(3, 'Nikita Singh', 'Female', '1997-11-30', 'MBA', '9845623412', '23bca10810@cuchd.in', 
-'7890, Chandigarh Road, Panchkula'); -- Sample data for hostels  
-INSERT INTO hostels VALUES   
-(1, 'Sukhna Tagore', 'Block A', 50, 'Girls'),  
-(2, 'Ganga Bhawan', 'Block B', 80, 'Boys'),  
-(3, 'Saraswati Bhawan', 'Block C', 60, 'Co-ed'); -- Sample data for rooms  
-INSERT INTO rooms VALUES   
-(101, 1, 'A101', 2, 1, 'AC'),  
-(102, 1, 'A102', 2, 1, 'Non-AC'),  
-(201, 2, 'B101', 3, 2, 'AC'), 
-(202, 2, 'B102', 3, 1, 'Shared'), 
-(301, 3, 'C101', 2, 1, 'AC'); -- Sample data for warden  
-INSERT INTO warden VALUES   
-(1, 'Mr. Sharma', '9876543210', 'warden1@cuchd.in', 1),  
-(2, 'Mrs. Mehta', '9876501234', 'warden2@cuchd.in', 2); 
+-- 3. Inventory Table
+CREATE TABLE Inventory (
+    CarID INT,
+    ShowroomID INT,
+    Quantity INT NOT NULL,
+    PRIMARY KEY (CarID, ShowroomID),
+    FOREIGN KEY (CarID) REFERENCES Cars(CarID),
+    FOREIGN KEY (ShowroomID) REFERENCES Showrooms(ShowroomID)
+);
 
--- Sample data for allotments  
-INSERT INTO allotments VALUES   
-(1, 1, 101, '2024-07-01', NULL),  
-(2, 2, 201, '2024-07-01', NULL),  
-(3, 3, 301, '2024-07-02', NULL); -- Sample data for payment  
-INSERT INTO payment VALUES   
-(1, 1, 12000, '2024-07-01', 'UPI', 'Paid'),  
-(2, 2, 10000, '2024-07-01', 'Cash', 'Paid'),  
-(3, 3, 15000, '2024-07-02', 'Card', 'Pending'); -- Sample data for complaints  
-INSERT INTO complaints VALUES   
-(1, 1, 101, 'Leaking tap', '2024-07-05', 'Open'),  
-(2, 2, 201, 'Fan not working', '2024-07-06', 'Closed'),  
-(3, 3, 301, 'Lights not working', '2024-07-07', 'Open'); -- Sample data for visitors  
-INSERT INTO visitors VALUES   
-(1, 1, 'Priya Rana', 'Sister', '2024-07-05', '10:00:00', '12:00:00'),  
-(2, 2, 'Mohan Kumar', 'Father', '2024-07-06', '09:00:00', '11:00:00'); -- Sample data for inventory  
+-- 4. Customers Table
+CREATE TABLE Customers (
+    CustomerID INT PRIMARY KEY,
+    Name VARCHAR(50) NOT NULL,
+    Contact VARCHAR(20),
+    Address VARCHAR(100),
+    PreferredModel VARCHAR(50)
+);
 
-INSERT INTO inventory VALUES   
-(1, 1, 'Bed', 50, 'Good'),  
-(2, 2, 'Table', 30, 'Damaged'),  
-(3, 3, 'Chair', 40, 'Good');
+-- 5. Employees Table
+CREATE TABLE Employees (
+    EmployeeID INT PRIMARY KEY,
+    Name VARCHAR(50) NOT NULL,
+    Designation VARCHAR(30),
+    SalesCount INT DEFAULT 0
+);
+
+-- 6. Sales Table
+CREATE TABLE Sales (
+    SaleID INT PRIMARY KEY,
+    CarID INT,
+    CustomerID INT,
+    EmployeeID INT,
+    SaleDate DATE,
+    Price DECIMAL(10,2),
+    FOREIGN KEY (CarID) REFERENCES Cars(CarID),
+    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID),
+    FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID)
+);
+
+-- 7. Test Drives Table
+CREATE TABLE TestDrives (
+    TestDriveID INT PRIMARY KEY,
+    CustomerID INT,
+    CarID INT,
+    TestDriveDate DATE,
+    Status VARCHAR(20),
+    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID),
+    FOREIGN KEY (CarID) REFERENCES Cars(CarID)
+);
+
+-- 8. Services Table
+CREATE TABLE Services (
+    ServiceID INT PRIMARY KEY,
+    CarID INT,
+    ServiceDate DATE,
+    Description TEXT,
+    Cost DECIMAL(10,2),
+    FOREIGN KEY (CarID) REFERENCES Cars(CarID)
+);
+
+-- DATA INSERTIONS
+
+-- Showrooms
+INSERT INTO Showrooms VALUES
+(1, 'Mahindra AutoZone', 'Mumbai', 'Rohit Sharma'),
+(2, 'Mahindra MaxDrive', 'Delhi', 'Anjali Mehta'),
+(3, 'Mahindra Elite Motors', 'Bangalore', 'Ravi Verma'),
+(4, 'Mahindra SpeedHub', 'Chennai', 'Sunita Rao'),
+(5, 'Mahindra DriveX', 'Pune', 'Aman Kapoor'),
+(6, 'Mahindra ApexAuto', 'Hyderabad', 'Pooja Yadav'),
+(7, 'Mahindra RapidCars', 'Ahmedabad', 'Kunal Bhatia'),
+(8, 'Mahindra Zoom Motors', 'Jaipur', 'Neeraj Thakur'),
+(9, 'Mahindra KingAuto', 'Lucknow', 'Riya Sinha'),
+(10, 'Mahindra StarDrive', 'Kolkata', 'Saurav Ghosh');
+
+-- Cars
+INSERT INTO Cars VALUES
+(1, 'Thar', 'SUV', 'Diesel', 1500000.00),
+(2, 'XUV700', 'SUV', 'Petrol', 2000000.00),
+(3, 'Scorpio-N', 'SUV', 'Diesel', 1800000.00),
+(4, 'Bolero', 'MPV', 'Diesel', 1000000.00),
+(5, 'XUV300', 'Compact SUV', 'Petrol', 1300000.00),
+(6, 'Marazzo', 'MPV', 'Diesel', 1400000.00),
+(7, 'Alturas G4', 'Luxury SUV', 'Diesel', 2700000.00),
+(8, 'KUV100 NXT', 'Micro SUV', 'Petrol', 700000.00),
+(9, 'eXUV300', 'Electric SUV', 'Electric', 1800000.00),
+(10, 'BE.05', 'Concept EV', 'Electric', 2500000.00);
+
+-- Inventory
+INSERT INTO Inventory VALUES
+(1, 1, 10),
+(2, 2, 8),
+(3, 3, 7),
+(4, 4, 6),
+(5, 5, 12),
+(6, 6, 4),
+(7, 7, 3),
+(8, 8, 9),
+(9, 9, 5),
+(10, 10, 6);
+
+-- Customers
+INSERT INTO Customers VALUES
+(1, 'Akash Malhotra', '9876543210', 'New Delhi', 'XUV700'),
+(2, 'Sneha Reddy', '9823456789', 'Hyderabad', 'Thar'),
+(3, 'Rahul Jain', '9012345678', 'Mumbai', 'Scorpio-N'),
+(4, 'Priya Nair', '9567890123', 'Chennai', 'XUV300'),
+(5, 'Karan Mehta', '9234567890', 'Pune', 'Bolero'),
+(6, 'Ravneet Singh', '9812345670', 'Ludhiana', 'Alturas G4'),
+(7, 'Megha Bansal', '9801234567', 'Jaipur', 'Marazzo'),
+(8, 'Vikas Anand', '9786543210', 'Bangalore', 'BE.05'),
+(9, 'Tanvi Kapoor', '9767890123', 'Ahmedabad', 'KUV100 NXT'),
+(10, 'Siddharth Das', '9745678901', 'Kolkata', 'eXUV300');
+
+-- Employees
+INSERT INTO Employees VALUES
+(1, 'Manoj Kumar', 'Sales Executive', 5),
+(2, 'Divya Sharma', 'Sales Manager', 10),
+(3, 'Nikhil Joshi', 'Support Staff', 3),
+(4, 'Anita Das', 'Sales Executive', 6),
+(5, 'Rajeev Kapoor', 'Technician', 2),
+(6, 'Deepika Rani', 'Customer Relations', 4),
+(7, 'Sandeep Chauhan', 'Sales Executive', 5),
+(8, 'Arjun Verma', 'Inventory Manager', 1),
+(9, 'Bhavna Tyagi', 'Finance Officer', 0),
+(10, 'Mohit Yadav', 'Technician', 2);
+
+-- Sales
+INSERT INTO Sales VALUES
+(1, 1, 1, 1, '2025-01-10', 1500000.00),
+(2, 2, 2, 2, '2025-02-12', 2000000.00),
+(3, 3, 3, 3, '2025-03-15', 1800000.00),
+(4, 4, 4, 4, '2025-04-18', 1000000.00),
+(5, 5, 5, 5, '2025-05-20', 1300000.00),
+(6, 6, 6, 6, '2025-06-22', 1400000.00),
+(7, 7, 7, 7, '2025-07-25', 2700000.00),
+(8, 8, 8, 8, '2025-08-10', 2500000.00),
+(9, 9, 9, 9, '2025-09-14', 700000.00),
+(10, 10, 10, 10, '2025-10-05', 1800000.00);
+
+-- Test Drives
+INSERT INTO TestDrives VALUES
+(1, 1, 1, '2025-01-05', 'Completed'),
+(2, 2, 2, '2025-02-10', 'Pending'),
+(3, 3, 3, '2025-03-10', 'Completed'),
+(4, 4, 4, '2025-04-12', 'Completed'),
+(5, 5, 5, '2025-05-15', 'Completed'),
+(6, 6, 6, '2025-06-01', 'Completed'),
+(7, 7, 7, '2025-07-03', 'Pending'),
+(8, 8, 8, '2025-08-08', 'Completed'),
+(9, 9, 9, '2025-09-12', 'Completed'),
+(10, 10, 10, '2025-10-01', 'Pending');
+
+-- Services
+INSERT INTO Services VALUES
+(1, 1, '2025-01-25', 'Oil Change and Engine Check', 3000.00),
+(2, 2, '2025-02-28', 'AC Service', 2500.00),
+(3, 3, '2025-03-30', 'Full Service', 5000.00),
+(4, 4, '2025-04-25', 'Battery Replacement', 3500.00),
+(5, 5, '2025-05-28', 'Brake Pad Replacement', 2800.00),
+(6, 6, '2025-06-15', 'Suspension Check', 4000.00),
+(7, 7, '2025-07-10', 'Interior Cleaning', 1500.00),
+(8, 8, '2025-08-18', 'Tire Alignment', 2200.00),
+(9, 9, '2025-09-21', 'Software Update', 1200.00),
+(10, 10, '2025-10-10', 'General Inspection', 1800.00);
 
 
 
--- Quiries
+--  Quieries
 
--- 1. Update Operation
-UPDATE payment 
-SET status = 'Paid' 
-WHERE student_id = 3; 
+-- 1) View all car models with prices
+SELECT Model, Price FROM Cars;
 
--- 2. Delete Operation
-DELETE FROM complaints 
-WHERE complaint_id = 5; 
+-- 2) View total number of cars in each showroom
+SELECT Showrooms.Name, SUM(Inventory.Quantity) AS TotalCars
+FROM Inventory
+JOIN Showrooms ON Inventory.ShowroomID = Showrooms.ShowroomID
+GROUP BY Showrooms.Name;
 
--- 3. ALTER Operation 
-ALTER TABLE rooms 
-ADD room_type VARCHAR(20); 
+-- 3) View cars sold by each employee
+SELECT Employees.Name, COUNT(Sales.SaleID) AS TotalSold
+FROM Sales
+JOIN Employees ON Sales.EmployeeID = Employees.EmployeeID
+GROUP BY Employees.Name;
 
--- 4. JOIN with ASC (Ascending Order) 
-SELECT s.name, r.room_number 
-FROM student s 
-JOIN allotments a ON s.student_id = a.student_id 
-JOIN rooms r ON a.room_id = r.room_id 
-ORDER BY r.room_number ASC; 
+-- 4) Insert a new customer
+INSERT INTO Customers (CustomerID, Name, Contact, Address, PreferredModel)
+VALUES (11, 'Arjun Singh', '9001234567', 'Noida', 'Thar');
 
--- 5. JOIN with DESC (Descending Order) 
-SELECT s.name, r.room_number 
-FROM student s 
-JOIN allotments a ON s.student_id = a.student_id 
-JOIN rooms r ON a.room_id = r.room_id 
-ORDER BY r.room_number DESC; 
+-- 5) Update price of a specific car
+UPDATE Cars SET Price = 2100000.00 WHERE Model = 'XUV700';
 
--- 6. GROUP BY Operation 
-SELECT h.name AS hostel_name, COUNT(s.student_id) AS total_students 
-FROM hostels h 
-JOIN rooms r ON h.hostel_id = r.hostel_id 
-JOIN allotments a ON r.room_id = a.room_id 
-JOIN student s ON a.student_id = s.student_id 
-GROUP BY h.name; 
+-- 6) Retrieve customers who took a test drive with car model
+SELECT Customers.Name, Cars.Model, TestDrives.Status
+FROM TestDrives
+JOIN Customers ON TestDrives.CustomerID = Customers.CustomerID
+JOIN Cars ON TestDrives.CarID = Cars.CarID;
 
--- 7. SELECT BETWEEN Operation 
-SELECT name, dob 
-FROM student 
-WHERE dob BETWEEN '1998-01-01' AND '2000-01-01'; 
+-- 7) Retrieve all sales details with car, customer, and price
+SELECT Sales.SaleID, Customers.Name, Cars.Model, Sales.Price
+FROM Sales
+JOIN Cars ON Sales.CarID = Cars.CarID
+JOIN Customers ON Sales.CustomerID = Customers.CustomerID;
 
--- 8. UNION Operation 
-SELECT name FROM student WHERE course = 'BCA' 
-UNION  
-SELECT name FROM student WHERE course = 'BBA'; 
+-- 8) Count services done per car
+SELECT Cars.Model, COUNT(Services.ServiceID) AS TotalServices
+FROM Services
+JOIN Cars ON Services.CarID = Cars.CarID
+GROUP BY Cars.Model;
 
--- 9. LIKE Operation 
-SELECT name 
-FROM student 
-WHERE name LIKE 'A%'; 
+-- 9) Average cost of services
+SELECT AVG(Cost) AS AverageServiceCost FROM Services;
 
--- 10. LIMIT Operation 
-SELECT s.name, p.amount, p.status 
-FROM student s 
-JOIN payment p ON s.student_id = p.student_id 
-WHERE p.status = 'Pending' 
-LIMIT 5; 
+-- 10) Get all employees with more than 5 sales
+SELECT Name, SalesCount FROM Employees WHERE SalesCount > 5;
 
--- 11. DROP Operation 
-DROP TABLE complaints; 
+-- 11) Showrooms having more than 8 cars in stock
+SELECT Showrooms.Name, SUM(Inventory.Quantity) AS TotalStock
+FROM Inventory
+JOIN Showrooms ON Inventory.ShowroomID = Showrooms.ShowroomID
+GROUP BY Showrooms.Name
+HAVING SUM(Inventory.Quantity) > 8;
 
--- 12. SELECT with JOIN, ASC, and GROUP BY 
-SELECT s.course, SUM(p.amount) AS total_paid 
-FROM student s 
-JOIN payment p ON s.student_id = p.student_id 
-GROUP BY s.course 
-ORDER BY total_paid ASC; 
+-- 12) INNER JOIN: Sales with employee and car
+SELECT Employees.Name AS Employee, Cars.Model, Sales.SaleDate
+FROM Sales
+JOIN Employees ON Sales.EmployeeID = Employees.EmployeeID
+JOIN Cars ON Sales.CarID = Cars.CarID;
 
--- 13. SELECT with LIKE and LIMIT 
-SELECT name 
-FROM student 
-WHERE name LIKE '%Sharma%' 
-LIMIT 3; 
+-- 13) LEFT JOIN: All customers even if they didn’t take a test drive
+SELECT Customers.Name, TestDrives.Status
+FROM Customers
+LEFT JOIN TestDrives ON Customers.CustomerID = TestDrives.CustomerID;
 
--- 14 UPDATE with JOIN 
-UPDATE rooms r 
-JOIN hostels h ON r.hostel_id = h.hostel_id 
-SET r.occupied = r.occupied + 1 
-WHERE h.name = 'Sukhna Tagore' AND r.room_number = 'A101'; 
+-- 14) RIGHT JOIN: All test drives and their customers
+SELECT TestDrives.TestDriveID, Cars.Model, Customers.Name
+FROM TestDrives
+RIGHT JOIN Cars ON TestDrives.CarID = Cars.CarID
+RIGHT JOIN Customers ON TestDrives.CustomerID = Customers.CustomerID;
 
--- 15 DELETE with JOIN 
-DELETE c 
-FROM complaints c 
-JOIN rooms r ON c.room_id = r.room_id 
-JOIN hostels h ON r.hostel_id = h.hostel_id 
-WHERE r.room_number = 'A101' AND h.name = 'Sukhna Tagore';
+-- 15) Group by test drive status
+SELECT Status, COUNT(*) AS Total
+FROM TestDrives
+GROUP BY Status;
